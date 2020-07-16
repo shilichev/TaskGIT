@@ -1,0 +1,31 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.textHead {
+  margin: 0;
+  padding: 0;
+  font-size: 25px;
+  font-family: 'Times New Roman';
+  color: #2b6eff;
+  position: relative;
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+}
+
+.lineHead {
+  background-color: #2b6eff;
+  height: 3px;
+}
+/*# sourceMappingURL=style.css.map */
