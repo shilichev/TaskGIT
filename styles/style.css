@@ -28,4 +28,17 @@ header {
   background-color: #2b6eff;
   height: 3px;
 }
+
+.avatar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.login {
+  padding: 10px;
+}
 /*# sourceMappingURL=style.css.map */
