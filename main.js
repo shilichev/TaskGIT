@@ -1,26 +1,27 @@
 const API_URL =
   "https://api.github.com/repos/thomasdavis/backbonetutorials/contributors";
+const GOLD = "GOLD";
 let contributors = [];
 let filteredContributors = [];
 
 const getContributors = () => {
   $.ajax({
     url: API_URL,
+    dataType: "json",
     success: getContributorsList,
   });
 };
 
 const getContributorsList = (contributorsList) => {
-  console.log(contributorsList);
-  contributors = contributorsList;
   filteredContributors = contributorsList;
-  console.log(contributors);
-  showContributors();
+  contributors = sorteringContributors(contributorsList, true);
+  showContributors(contributorsList);
 };
-const showContributors = (contributors) => {
-  console.log(contributors);
+
+const showContributors = (contributorsForShow) => {
+  console.log(contributorsForShow);
   $("div.avatar").remove();
-  contributors.forEach((contributorsElement) => {
+  contributorsForShow.forEach((contributorsElement) => {
     $("div.contact").append(
       `<div class ="avatar">
           <div  class = "login"><strong>LOGIN:${contributorsElement.login}</strong>
@@ -33,46 +34,57 @@ const showContributors = (contributors) => {
     );
   });
 };
+const filteringContributors = (listContributors, status) => {
+  console.log(status, "status");
+  filteredContributors = listContributors.filter((contributor) => {
+    switch (status) {
+      case GOLD:
+        return contributor.contributions > 8;
+      case "SILVER":
+        return contributor.contributions <= 8 && contributor.contributions >= 2;
+      case "BRONZE":
+        return contributor.contributions < 2;
+      case "ALL":
+      default:
+        return true;
+    }
+  });
+};
+const sorteringContributors = (listForSort, ask) => {
+  console.log(listForSort);
+  listForSort.sort(function (a, b) {
+    console.log(a,b);
+    if (a.login < b.login) {
+      return -1;
+    }
+    if (a.login > b.login) {
+      return 1;
+    }
+    return 0;
+  });
+  if (ask) return listForSort;
+  listForSort.reverse();
+  return listForSort;
+};
 
-// const showContributors = () => {
-//   $("div.avatar").remove();
-//  contributorsList.forEach((contributorsElement) => {
-//    changeContributors(contributorsElement);
-//  });
-// };
-// showContributors();
-
-//const showGoldContributors = (contributorsData) => {
-// $("div.avatar").remove();
-// contributorsData.forEach((contributorsElement) => {
-//   if (contributorsElement.contributions > 8) {
-//    changeContributors(contributorsElement);
-//   }
-// });
-//};
-$("select")
-  .change(function () {
+$(document).ready(function () {
+  getContributors();
+  $("select").change(function () {
     let str = "";
     $("select option:selected").each(function () {
       str += $(this).text();
     });
     console.log(str);
-    switch (str) {
-      case "ALL":
-        getContributors();
-        break;
-      case "GOLD":
-        showGoldContributors();
-        break;
-      case "SILVER":
-        getContributorsSILVER();
-        break;
-      case "BRONZE":
-        getContributorsBRONZE();
-        break;
-      default:
-        console.log("4");
-        break;
-    }
-  })
-  .change();
+    filteringContributors(contributors, str);
+    showContributors(filteredContributors);
+  });
+  $(".asc").click(function () {
+    console.log(filteredContributors);
+    filteredContributors = sorteringContributors(filteredContributors, true);
+    showContributors(filteredContributors);
+  });
+  $(".desc").click(function () {
+    filteredContributors = sorteringContributors(filteredContributors, false);
+    showContributors(filteredContributors);
+  });
+});
