@@ -1,6 +1,9 @@
 const API_URL =
   "https://api.github.com/repos/thomasdavis/backbonetutorials/contributors";
 const GOLD = "GOLD";
+const SILVER = "SILVER";
+const BRONZE = "BRONZE";
+const ALL = "ALL";
 let contributors = [];
 let filteredContributors = [];
 
@@ -14,12 +17,11 @@ const getContributors = () => {
 
 const getContributorsList = (contributorsList) => {
   filteredContributors = contributorsList;
-  contributors = sorteringContributors(contributorsList, true);
+  contributors = sortContributors(contributorsList, true);
   showContributors(contributorsList);
 };
 
 const showContributors = (contributorsForShow) => {
-  console.log(contributorsForShow);
   $("div.avatar").remove();
   contributorsForShow.forEach((contributorsElement) => {
     $("div.contact").append(
@@ -35,56 +37,51 @@ const showContributors = (contributorsForShow) => {
   });
 };
 const filteringContributors = (listContributors, status) => {
-  console.log(status, "status");
   filteredContributors = listContributors.filter((contributor) => {
     switch (status) {
       case GOLD:
         return contributor.contributions > 8;
-      case "SILVER":
+      case SILVER:
         return contributor.contributions <= 8 && contributor.contributions >= 2;
-      case "BRONZE":
+      case BRONZE:
         return contributor.contributions < 2;
-      case "ALL":
+      case ALL:
       default:
         return true;
     }
   });
 };
-const sorteringContributors = (listForSort, ask) => {
-  console.log(listForSort);
-  listForSort.sort(function (a, b) {
-    console.log(a,b);
-    if (a.login < b.login) {
+const sortContributors = (contributors, direction) => {
+  contributors.sort(function (a, b) {
+    if (a.login.toLowerCase() < b.login.toLowerCase()) {
       return -1;
     }
-    if (a.login > b.login) {
+    if (a.login.toLowerCase() > b.login.toLowerCase()) {
       return 1;
     }
     return 0;
   });
-  if (ask) return listForSort;
-  listForSort.reverse();
-  return listForSort;
+  if (direction) return contributors;
+  contributors.reverse();
+  return contributors;
 };
 
 $(document).ready(function () {
   getContributors();
-  $("select").change(function () {
+  $(".choice").change(function () {
     let str = "";
-    $("select option:selected").each(function () {
+    $(".choice option:selected").each(function () {
       str += $(this).text();
     });
-    console.log(str);
     filteringContributors(contributors, str);
     showContributors(filteredContributors);
   });
   $(".asc").click(function () {
-    console.log(filteredContributors);
-    filteredContributors = sorteringContributors(filteredContributors, true);
+    filteredContributors = sortContributors(filteredContributors, true);
     showContributors(filteredContributors);
   });
   $(".desc").click(function () {
-    filteredContributors = sorteringContributors(filteredContributors, false);
+    filteredContributors = sortContributors(filteredContributors, false);
     showContributors(filteredContributors);
   });
 });
